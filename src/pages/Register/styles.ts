@@ -9,7 +9,7 @@ export const Container = styled.div`
   width: 100%;
 
   display: flex;
-  background: #f0131e;
+  background: #0a5aaa;
 `;
 
 export const Thumbnail = styled.div`
@@ -17,7 +17,7 @@ export const Thumbnail = styled.div`
 
   background-image: url(${BackgroundImage});
   background-repeat: no-repeat;
-  background-position: 65%;
+  background-position: 0;
   background-size: auto 100%;
 `;
 
@@ -59,18 +59,18 @@ export const Box = styled.div`
 
       &[type='submit'] {
         margin-top: 2rem;
-        background: #94191f;
+        background: #0b4075;
         border-radius: 0.625rem;
 
         font-family: 'Inter';
-        font-weight: 700;
         font-size: 1.2rem;
+        font-weight: 700;
         color: white;
 
         transition: 0.2s background;
 
         &:hover {
-          background: ${lighten(0.05, '#94191f')};
+          background: ${lighten(0.05, '#0B4075')};
         }
       }
     }

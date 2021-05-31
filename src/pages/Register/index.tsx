@@ -3,12 +3,21 @@ import { Link } from 'react-router-dom';
 
 import * as S from './styles';
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   return (
     <S.Container>
+      <S.Thumbnail />
       <S.Box>
         <S.Logo />
         <form>
+          <label htmlFor="name">Nome:</label>
+          <input
+            type="text"
+            placeholder="Insira seu nome"
+            name="name"
+            id="name"
+          />
+
           <label htmlFor="email">Email:</label>
           <input
             type="text"
@@ -25,14 +34,13 @@ const Login: React.FC = () => {
             id="pass"
           />
 
-          <input type="submit" value="Fazer login" />
+          <input type="submit" value="Fazer cadastro" />
 
-          <Link to="/register">Ainda não possui conta?</Link>
+          <Link to="/">Já possui conta?</Link>
         </form>
       </S.Box>
-      <S.Thumbnail />
     </S.Container>
   );
 };
 
-export default Login;
+export default Register;
