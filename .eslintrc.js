@@ -26,6 +26,7 @@ module.exports = {
     project: './tsconfig.json',
   },
   rules: {
+    'import/prefer-default-export': "off",
     'linebreak-style': 'off',
     'prettier/prettier': [
       'warn',
