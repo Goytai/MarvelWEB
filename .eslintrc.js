@@ -26,6 +26,7 @@ module.exports = {
     project: './tsconfig.json',
   },
   rules: {
+    'jsx-a11y/label-has-associated-control': 'off',
     'import/prefer-default-export': "off",
     'linebreak-style': 'off',
     'prettier/prettier': [
