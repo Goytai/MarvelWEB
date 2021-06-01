@@ -1,18 +1,40 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { useAuth } from 'src/hooks/auth';
 
+import * as Yup from 'yup';
 import * as S from './styles';
 
 const Login: React.FC = () => {
   const history = useHistory();
 
+  const { signIn } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   const formSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      history.push('/dashboard');
+      try {
+        const schema = Yup.object().shape({
+          email: Yup.string()
+            .required('E-mail obrigatório')
+            .email('Digite um e-mail válido'),
+          password: Yup.string().required('Senha obrigatório')
+        });
+
+        await schema.validate({ email, password });
+
+        await signIn({ email, password });
+
+        history.push('/dashboard');
+      } catch (error) {
+        console.log(error);
+      }
     },
-    [history]
+    [email, history, password, signIn]
   );
 
   return (
@@ -26,6 +48,8 @@ const Login: React.FC = () => {
             placeholder="Insira seu e-mail"
             name="email"
             id="email"
+            value={email}
+            onChange={event => setEmail(event.target.value)}
           />
 
           <label htmlFor="pass">Senha:</label>
@@ -34,6 +58,8 @@ const Login: React.FC = () => {
             placeholder="Insira sua senha"
             name="pass"
             id="pass"
+            value={password}
+            onChange={event => setPassword(event.target.value)}
           />
 
           <input type="submit" value="Fazer login" />
