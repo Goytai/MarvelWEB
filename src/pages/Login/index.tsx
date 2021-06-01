@@ -1,14 +1,25 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import * as S from './styles';
 
 const Login: React.FC = () => {
+  const history = useHistory();
+
+  const formSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      history.push('/dashboard');
+    },
+    [history]
+  );
+
   return (
     <S.Container>
       <S.Box>
         <S.Logo />
-        <form>
+        <form onSubmit={event => formSubmit(event)}>
           <label htmlFor="email">Email:</label>
           <input
             type="text"
