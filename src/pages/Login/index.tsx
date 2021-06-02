@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+
 import { useAuth } from 'src/hooks/auth';
+import { useError } from 'src/hooks/error';
 
 import * as Yup from 'yup';
 import * as S from './styles';
@@ -9,6 +11,7 @@ const Login: React.FC = () => {
   const history = useHistory();
 
   const { signIn } = useAuth();
+  const { errorResolve } = useError();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,19 +25,24 @@ const Login: React.FC = () => {
           email: Yup.string()
             .required('E-mail obrigatório')
             .email('Digite um e-mail válido'),
-          password: Yup.string().required('Senha obrigatório')
+          password: Yup.string().required('E-mail obrigatório')
         });
 
-        await schema.validate({ email, password });
+        await schema.validate(
+          { email, password },
+          {
+            abortEarly: false
+          }
+        );
 
         await signIn({ email, password });
 
         history.push('/dashboard');
       } catch (error) {
-        console.log(error);
+        errorResolve(error);
       }
     },
-    [email, history, password, signIn]
+    [email, errorResolve, history, password, signIn]
   );
 
   return (

@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+
 import api from 'src/services/api';
 
-import * as Yup from 'yup';
+import { useError } from 'src/hooks/error';
 
+import * as Yup from 'yup';
 import * as S from './styles';
 
 const Register: React.FC = () => {
@@ -12,6 +14,8 @@ const Register: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const { errorResolve } = useError();
 
   const formSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -40,11 +44,11 @@ const Register: React.FC = () => {
         });
 
         history.push('/');
-      } catch (error) {
-        console.log(error);
+      } catch (errors) {
+        errorResolve(errors);
       }
     },
-    [email, history, name, password]
+    [email, errorResolve, history, name, password]
   );
 
   return (

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import Header from 'src/components/Header';
 import Card from 'src/components/Card';
+import { useAuth } from 'src/hooks/auth';
 import * as S from './styles';
 
 const Dashboard: React.FC = () => {
@@ -37,9 +38,15 @@ const Dashboard: React.FC = () => {
     }
   ]);
 
+  const { signOut } = useAuth();
+
   return (
     <S.Container>
       <Header />
+
+      <button type="button" onClick={signOut}>
+        Sair
+      </button>
 
       <S.Highlights>
         {highlights.map(comic => (
