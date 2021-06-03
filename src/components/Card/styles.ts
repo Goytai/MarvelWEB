@@ -11,7 +11,7 @@ export const Container = styled.a<CardProps>`
   background: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0.8) 100%
+      rgba(0, 0, 0, 0.5) 100%
     ),
     url(${props => props.img});
   background-size: cover;
@@ -23,7 +23,7 @@ export const Container = styled.a<CardProps>`
 
   text-decoration: none;
 
-  &:hover {
+  /* &:hover {
     background: linear-gradient(
         180deg,
         rgba(0, 0, 0, 0) 0%,
@@ -31,7 +31,7 @@ export const Container = styled.a<CardProps>`
       ),
       url(${props => props.img});
     background-size: cover;
-  }
+  } */
 
   h4 {
     color: white;

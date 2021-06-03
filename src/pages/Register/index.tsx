@@ -37,7 +37,7 @@ const Register: React.FC = () => {
           }
         );
 
-        await api.post('/users', {
+        await api.post('users', {
           name,
           email,
           password
