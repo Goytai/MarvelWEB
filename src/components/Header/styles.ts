@@ -13,23 +13,28 @@ export const Container = styled.header`
 
   margin-bottom: 2rem;
 
-  input {
+  form {
     min-width: 300px;
     width: 30rem;
     height: 3.5rem;
 
-    padding-inline: 2rem;
-    background: #244d94;
-    border: none;
-    border-radius: 0.25rem;
+    input {
+      width: 100%;
+      height: 100%;
 
-    font-family: 'Roboto';
-    font-size: 1rem;
-    font-weight: 500;
-    color: white;
+      padding-inline: 2rem;
+      background: #244d94;
+      border: none;
+      border-radius: 0.25rem;
 
-    &::placeholder {
+      font-family: 'Roboto';
+      font-size: 1rem;
+      font-weight: 500;
       color: white;
+
+      &::placeholder {
+        color: white;
+      }
     }
   }
 
@@ -58,10 +63,21 @@ export const Logo = styled(logo)`
   height: 3rem;
 `;
 
-export const Avatar = styled.div`
+export const Avatar = styled.button`
   margin-left: 2rem;
   height: 3rem;
   width: 3rem;
   border-radius: 2rem;
   background: #244d94;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: none;
+  cursor: pointer;
+
+  svg {
+    fill: white;
+  }
 `;

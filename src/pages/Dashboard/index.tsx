@@ -5,27 +5,36 @@ import Card from 'src/components/Card';
 
 import api from 'src/services/api';
 import { useAuth } from 'src/hooks/auth';
+
 import * as S from './styles';
 
-interface CharactersProps {
+interface MarvelContent {
   marvel_id: string;
-  name: string;
   description: string;
   picture: string;
+  isFavorite: boolean;
 }
 
-interface ComicsProps {
-  marvel_id: string;
+interface CharactersProps extends MarvelContent {
+  name: string;
+}
+
+interface ComicsProps extends MarvelContent {
   title: string;
-  description: string;
-  picture: string;
+}
+
+interface MarvelData {
+  characters: CharactersProps[];
+  comics: ComicsProps[];
 }
 
 const Dashboard: React.FC = () => {
   const { token } = useAuth();
 
-  const [characters, setCharacters] = useState<CharactersProps[]>([]);
-  const [comics, setComics] = useState<ComicsProps[]>([]);
+  const [marvelData, setMarvelData] = useState<MarvelData>({
+    characters: [],
+    comics: []
+  });
 
   useEffect(() => {
     (async () => {
@@ -35,8 +44,29 @@ const Dashboard: React.FC = () => {
         }
       });
 
-      setCharacters(data.user.characters);
-      setComics(data.user.comics);
+      const responseCharacters = data.user.characters as Omit<
+        CharactersProps,
+        'isFavorite'
+      >[];
+      const responseComics = data.user.comics as Omit<
+        ComicsProps,
+        'isFavorite'
+      >[];
+
+      const characters: CharactersProps[] = [];
+      const comics: ComicsProps[] = [];
+
+      responseCharacters.forEach(oldCharacter =>
+        characters.push({ ...oldCharacter, isFavorite: true })
+      );
+      responseComics.forEach(oldComic =>
+        comics.push({ ...oldComic, isFavorite: true })
+      );
+
+      setMarvelData({
+        characters,
+        comics
+      });
     })();
   }, [token]);
 
@@ -59,26 +89,28 @@ const Dashboard: React.FC = () => {
       <S.Favorites>
         <h2 id="characters">Meus personagens favoritos</h2>
 
-        <div>
-          {characters.map(character => (
+        <div className="characters">
+          {marvelData.characters.map(character => (
             <Card
               id={character.marvel_id}
               img={character.picture}
+              name={character.name}
+              isFav={character.isFavorite}
               type="characters"
-              isFav={false}
             />
           ))}
         </div>
 
         <h2 id="comics">Minhas comics favoritas</h2>
 
-        <div>
-          {comics.map(comic => (
+        <div className="comics">
+          {marvelData.comics.map(comic => (
             <Card
               id={comic.marvel_id}
-              type="comics"
               img={comic.picture}
-              isFav={false}
+              title={comic.title}
+              isFav={comic.isFavorite}
+              type="comics"
             />
           ))}
         </div>

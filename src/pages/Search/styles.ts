@@ -5,19 +5,7 @@ export const Container = styled.div`
   background: linear-gradient(287.56deg, #3a71cf 0%, #244d94 100%); ;
 `;
 
-// export const Highlights = styled.section`
-//   max-width: 80rem;
-//   margin-inline: auto;
-//   gap: 1rem;
-//   display: flex;
-//   justify-content: space-between;
-
-//   a {
-//     width: 21rem;
-//   }
-// `;
-
-export const Favorites = styled.section`
+export const Main = styled.main`
   max-width: 80rem;
   margin-inline: auto;
 
