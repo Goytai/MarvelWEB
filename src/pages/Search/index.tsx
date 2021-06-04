@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import Header from 'src/components/Header';
 import { useLocation } from 'react-router-dom';
+import { AiOutlineLoading } from 'react-icons/ai';
 
 import api from 'src/services/api';
+
+import checkFavorites from 'src/utils/checkFavorites';
 import { useAuth } from 'src/hooks/auth';
+import { useData } from 'src/hooks/data';
+
+import Header from 'src/components/Header';
 import Card from 'src/components/Card';
+
 import * as S from './styles';
 
 interface MarvelContent {
   marvel_id: string;
-  description: string;
+  description?: string;
   picture: string;
   isFavorite: boolean;
 }
@@ -33,12 +39,16 @@ const Search: React.FC = () => {
   const filter = query.get('filter');
 
   const { token } = useAuth();
-  const [data, setData] = useState<DataProps>({
+  const { data } = useData();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchItems, setSearchItems] = useState<DataProps>({
     characters: [],
     comics: []
   });
 
   useEffect(() => {
+    setIsLoading(true);
     (async () => {
       const charactersRequest = api.get('characters', {
         headers: {
@@ -60,47 +70,64 @@ const Search: React.FC = () => {
 
       const response = await Promise.all([charactersRequest, comicsRequest]);
 
-      setData({
-        characters: response[0].data.characters,
-        comics: response[1].data.comics
+      const { characters, comics } = checkFavorites({
+        characters: response[0].data.characters as Omit<
+          CharactersProps,
+          'isFavorite'
+        >[],
+        comics: response[1].data.comics as Omit<ComicsProps, 'isFavorite'>[],
+        favoritesCharactersIds: data.favoritesCharactersIds,
+        favoritesComicsIds: data.favoritesComicsIds
+      });
+
+      setIsLoading(false);
+      setSearchItems({
+        characters,
+        comics
       });
     })();
-  }, [filter, token]);
+  }, [data, filter, token]);
 
   return (
     <S.Container>
       <Header />
 
       <S.Main>
-        <h2>Characters found:</h2>
+        {isLoading ? (
+          <AiOutlineLoading size={50} />
+        ) : (
+          <>
+            <h2>Characters found:</h2>
 
-        <div className="characters">
-          {data.characters.map(character => (
-            <Card
-              key={character.marvel_id}
-              id={character.marvel_id}
-              img={character.picture}
-              name={character.name}
-              isFav={character.isFavorite}
-              type="characters"
-            />
-          ))}
-        </div>
+            <div className="characters">
+              {searchItems.characters.map(character => (
+                <Card
+                  key={character.marvel_id}
+                  marvel_id={character.marvel_id}
+                  img={character.picture}
+                  name={character.name}
+                  isFav={character.isFavorite}
+                  type="characters"
+                />
+              ))}
+            </div>
 
-        <h2>Comics found:</h2>
+            <h2>Comics found:</h2>
 
-        <div className="characters">
-          {data.comics.map(comic => (
-            <Card
-              key={comic.marvel_id}
-              id={comic.marvel_id}
-              img={comic.picture}
-              title={comic.title}
-              isFav={comic.isFavorite}
-              type="comics"
-            />
-          ))}
-        </div>
+            <div className="characters">
+              {searchItems.comics.map(comic => (
+                <Card
+                  key={comic.marvel_id}
+                  marvel_id={comic.marvel_id}
+                  img={comic.picture}
+                  title={comic.title}
+                  isFav={comic.isFavorite}
+                  type="comics"
+                />
+              ))}
+            </div>
+          </>
+        )}
       </S.Main>
     </S.Container>
   );

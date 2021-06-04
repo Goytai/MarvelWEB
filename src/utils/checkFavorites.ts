@@ -1,6 +1,6 @@
 interface MarvelContent {
   marvel_id: string;
-  description: string;
+  description?: string;
   picture: string;
   isFavorite: boolean;
 }
@@ -16,10 +16,8 @@ interface ComicsProps extends MarvelContent {
 interface CheckFavoritesProps {
   characters: Omit<CharactersProps, 'isFavorite'>[];
   comics: Omit<ComicsProps, 'isFavorite'>[];
-  user: {
-    characters: Omit<CharactersProps, 'isFavorite'>[];
-    comics: Omit<ComicsProps, 'isFavorite'>[];
-  };
+  favoritesCharactersIds: number[];
+  favoritesComicsIds: number[];
 }
 
 interface Return {
@@ -30,18 +28,16 @@ interface Return {
 function checkFavorites({
   characters,
   comics,
-  user
+  favoritesCharactersIds,
+  favoritesComicsIds
 }: CheckFavoritesProps): Return {
-  const favoritesCharacters = user.characters;
-  const favoritesComics = user.comics;
-
   const resultCharacters = [] as CharactersProps[];
   const resultComics = [] as ComicsProps[];
 
   characters.forEach(character => {
     const isFavorite =
-      favoritesCharacters.findIndex(
-        favoriteCharacter => favoriteCharacter.marvel_id === character.marvel_id
+      favoritesCharactersIds.findIndex(
+        id => Number(character.marvel_id) === id
       ) !== -1;
 
     resultCharacters.push({ ...character, isFavorite });
@@ -49,9 +45,7 @@ function checkFavorites({
 
   comics.forEach(comic => {
     const isFavorite =
-      favoritesComics.findIndex(
-        favoriteComic => favoriteComic.marvel_id === comic.marvel_id
-      ) !== -1;
+      favoritesComicsIds.findIndex(id => Number(comic.marvel_id) === id) !== -1;
 
     resultComics.push({ ...comic, isFavorite });
   });

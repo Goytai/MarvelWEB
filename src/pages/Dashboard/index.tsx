@@ -1,118 +1,67 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import Header from 'src/components/Header';
 import Card from 'src/components/Card';
 
-import api from 'src/services/api';
-import { useAuth } from 'src/hooks/auth';
-
+import { useData } from 'src/hooks/data';
 import * as S from './styles';
 
-interface MarvelContent {
-  marvel_id: string;
-  description: string;
-  picture: string;
-  isFavorite: boolean;
-}
-
-interface CharactersProps extends MarvelContent {
-  name: string;
-}
-
-interface ComicsProps extends MarvelContent {
-  title: string;
-}
-
-interface MarvelData {
-  characters: CharactersProps[];
-  comics: ComicsProps[];
-}
-
 const Dashboard: React.FC = () => {
-  const { token } = useAuth();
-
-  const [marvelData, setMarvelData] = useState<MarvelData>({
-    characters: [],
-    comics: []
-  });
+  const { getFavorites, data } = useData();
 
   useEffect(() => {
-    (async () => {
-      const { data } = await api.get('users', {
-        headers: {
-          authorization: `Bearer ${token}`
-        }
-      });
+    getFavorites();
 
-      const responseCharacters = data.user.characters as Omit<
-        CharactersProps,
-        'isFavorite'
-      >[];
-      const responseComics = data.user.comics as Omit<
-        ComicsProps,
-        'isFavorite'
-      >[];
-
-      const characters: CharactersProps[] = [];
-      const comics: ComicsProps[] = [];
-
-      responseCharacters.forEach(oldCharacter =>
-        characters.push({ ...oldCharacter, isFavorite: true })
-      );
-      responseComics.forEach(oldComic =>
-        comics.push({ ...oldComic, isFavorite: true })
-      );
-
-      setMarvelData({
-        characters,
-        comics
-      });
-    })();
-  }, [token]);
+    return () => {};
+  }, [getFavorites]);
 
   return (
     <S.Container>
       <Header />
 
-      {/* <S.Highlights>
-        {highlights.map(comic => (
-          <Card
-            key={comic.marvel_id}
-            id={comic.marvel_id}
-            img={comic.picture}
-            name={comic.title}
-            isFav={false}
-          />
-        ))}
-      </S.Highlights> */}
-
       <S.Favorites>
-        <h2 id="characters">Meus personagens favoritos</h2>
+        <h2 id="characters">My favorite characters:</h2>
 
         <div className="characters">
-          {marvelData.characters.map(character => (
-            <Card
-              id={character.marvel_id}
-              img={character.picture}
-              name={character.name}
-              isFav={character.isFavorite}
-              type="characters"
-            />
-          ))}
+          {data.favoritesCharacters.length > 0 ? (
+            data.favoritesCharacters.map(character => (
+              <Card
+                key={character.marvel_id}
+                marvel_id={character.marvel_id}
+                img={character.picture}
+                name={character.name}
+                isFav={character.isFavorite}
+                type="characters"
+              />
+            ))
+          ) : (
+            <p>
+              You don&#39;t have characters in your favorites, look for some in
+              the header
+            </p>
+          )}
         </div>
 
-        <h2 id="comics">Minhas comics favoritas</h2>
+        <h2 id="comics">My favorite comics:</h2>
 
         <div className="comics">
-          {marvelData.comics.map(comic => (
-            <Card
-              id={comic.marvel_id}
-              img={comic.picture}
-              title={comic.title}
-              isFav={comic.isFavorite}
-              type="comics"
-            />
-          ))}
+          {data.favoritesComics.length > 0 ? (
+            data.favoritesComics.map(comic => (
+              <Card
+                key={comic.marvel_id}
+                marvel_id={comic.marvel_id}
+                img={comic.picture}
+                title={comic.title}
+                isFav={comic.isFavorite}
+                type="comics"
+              />
+            ))
+          ) : (
+            <p>
+              You don&#39;t have comics in your favorites, look for some in the
+              header
+            </p>
+          )}
         </div>
       </S.Favorites>
     </S.Container>

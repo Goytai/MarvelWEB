@@ -8,16 +8,20 @@ interface SignUpCredentials {
   password: string;
 }
 
+interface UserProps {
+  user_id: string;
+}
+
 interface AuthContextData {
   token: string;
-  user: any;
+  user: UserProps;
   signIn(credentials: SignUpCredentials): Promise<void>;
   signOut(): void;
 }
 
 interface AuthState {
   token: string;
-  user: any;
+  user: UserProps;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -38,7 +42,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     const response = await api.post('sessions', { email, password });
 
     const { token } = response.data;
-    const user = decode(token);
+    const user = decode(token) as UserProps;
 
     localStorage.setItem('@Marvel:token', token);
     localStorage.setItem('@Marvel:user', JSON.stringify(user));

@@ -1,4 +1,14 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const loading = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 export const Container = styled.div`
   min-height: 100vh;
@@ -10,6 +20,15 @@ export const Container = styled.div`
 
     display: flex;
 
+    > svg {
+      position: absolute;
+      left: 50%;
+      animation: 1s;
+      transform: translateX(-50%);
+
+      animation: 1s ${loading} linear infinite;
+    }
+
     img {
       width: 31.25rem;
       height: 37.5rem;
@@ -18,6 +37,7 @@ export const Container = styled.div`
     }
 
     main {
+      width: 100%;
       padding: 0 3rem;
       display: flex;
       flex-direction: column;
