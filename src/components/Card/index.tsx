@@ -34,7 +34,7 @@ const Card: React.FC<CardProps> = ({
 
       const singleType = type.slice(0, -1) as 'character' | 'comic';
 
-      if (isFav) {
+      if (isFavorite) {
         removeFavorite({
           marvel_id,
           type: singleType
@@ -57,7 +57,6 @@ const Card: React.FC<CardProps> = ({
       addFavorite,
       description,
       img,
-      isFav,
       isFavorite,
       marvel_id,
       name,

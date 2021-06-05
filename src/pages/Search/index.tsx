@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AiOutlineLoading } from 'react-icons/ai';
 
 import api from 'src/services/api';
 
-import checkFavorites from 'src/utils/checkFavorites';
 import { useAuth } from 'src/hooks/auth';
 import { useData } from 'src/hooks/data';
 
@@ -39,54 +38,52 @@ const Search: React.FC = () => {
   const filter = query.get('filter');
 
   const { token } = useAuth();
-  const { data } = useData();
+  const { checkFavorites } = useData();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchItems, setSearchItems] = useState<DataProps>({
     characters: [],
     comics: []
   });
 
-  useEffect(() => {
+  const searchRequest = useCallback(async () => {
     setIsLoading(true);
-    (async () => {
-      const charactersRequest = api.get('characters', {
-        headers: {
-          authorization: `Bearer ${token}`
-        },
-        params: {
-          search: filter
-        }
-      });
+    const charactersRequest = api.get('characters', {
+      headers: {
+        authorization: `Bearer ${token}`
+      },
+      params: {
+        search: filter
+      }
+    });
 
-      const comicsRequest = api.get('comics', {
-        headers: {
-          authorization: `Bearer ${token}`
-        },
-        params: {
-          search: filter
-        }
-      });
+    const comicsRequest = api.get('comics', {
+      headers: {
+        authorization: `Bearer ${token}`
+      },
+      params: {
+        search: filter
+      }
+    });
 
-      const response = await Promise.all([charactersRequest, comicsRequest]);
+    const response = await Promise.all([charactersRequest, comicsRequest]);
 
-      const { characters, comics } = checkFavorites({
-        characters: response[0].data.characters as Omit<
-          CharactersProps,
-          'isFavorite'
-        >[],
-        comics: response[1].data.comics as Omit<ComicsProps, 'isFavorite'>[],
-        favoritesCharactersIds: data.favoritesCharactersIds,
-        favoritesComicsIds: data.favoritesComicsIds
-      });
+    const { characters, comics } = checkFavorites({
+      remoteCharacters: response[0].data.characters,
+      remoteComics: response[1].data.comics
+    });
 
-      setIsLoading(false);
-      setSearchItems({
-        characters,
-        comics
-      });
-    })();
-  }, [data, filter, token]);
+    setIsLoading(false);
+    setSearchItems({
+      characters,
+      comics
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, token]);
+
+  useEffect(() => {
+    searchRequest();
+  }, [searchRequest]);
 
   return (
     <S.Container>

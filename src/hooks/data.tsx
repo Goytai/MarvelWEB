@@ -30,6 +30,10 @@ interface AuthContextData {
   getFavorites(): Promise<void>;
   addFavorite(newFavorite: AddFavoriteProps): void;
   removeFavorite(removeFavorite: RemoveFavoriteProps): void;
+  checkFavorites(remoteResponse: CheckFavoritesProps): {
+    characters: CharactersProps[];
+    comics: ComicsProps[];
+  };
 }
 
 interface AddFavoriteProps extends MarvelContent {
@@ -41,6 +45,11 @@ interface AddFavoriteProps extends MarvelContent {
 interface RemoveFavoriteProps {
   type: string;
   marvel_id: string;
+}
+
+interface CheckFavoritesProps {
+  remoteCharacters: Omit<CharactersProps, 'isFavorite'>[];
+  remoteComics: Omit<ComicsProps, 'isFavorite'>[];
 }
 
 const DataContext = createContext({} as AuthContextData);
@@ -183,11 +192,11 @@ export const DataProvider: React.FC = ({ children }) => {
         case 'comic':
           setData(old => {
             const newFavorites = old.favoritesComics.filter(
-              comic => comic.marvel_id !== marvel_id
+              comic => Number(comic.marvel_id) !== Number(marvel_id)
             );
 
             const newFavoritesId = old.favoritesCharactersIds.filter(
-              oldIndex => oldIndex !== Number(marvel_id)
+              oldIndex => Number(oldIndex) !== Number(marvel_id)
             );
 
             return {
@@ -203,13 +212,45 @@ export const DataProvider: React.FC = ({ children }) => {
     [token, user]
   );
 
+  const checkFavorites = useCallback(
+    ({ remoteCharacters, remoteComics }: CheckFavoritesProps) => {
+      const resultCharacters = [] as CharactersProps[];
+      const resultComics = [] as ComicsProps[];
+
+      remoteCharacters.forEach(character => {
+        const isFavorite =
+          data.favoritesCharactersIds.findIndex(
+            id => Number(character.marvel_id) === id
+          ) !== -1;
+
+        resultCharacters.push({ ...character, isFavorite });
+      });
+
+      remoteComics.forEach(comic => {
+        const isFavorite =
+          data.favoritesComicsIds.findIndex(
+            id => Number(comic.marvel_id) === id
+          ) !== -1;
+
+        resultComics.push({ ...comic, isFavorite });
+      });
+
+      return {
+        characters: resultCharacters,
+        comics: resultComics
+      };
+    },
+    [data.favoritesCharactersIds, data.favoritesComicsIds]
+  );
+
   return (
     <DataContext.Provider
       value={{
         data,
         getFavorites,
         addFavorite,
-        removeFavorite
+        removeFavorite,
+        checkFavorites
       }}
     >
       {children}
