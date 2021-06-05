@@ -23,9 +23,9 @@ const Login: React.FC = () => {
       try {
         const schema = Yup.object().shape({
           email: Yup.string()
-            .required('E-mail obrigatório')
-            .email('Digite um e-mail válido'),
-          password: Yup.string().required('E-mail obrigatório')
+            .required('Email is required')
+            .email('Insert a valid email.'),
+          password: Yup.string().required('Password is required')
         });
 
         await schema.validate(
@@ -53,26 +53,26 @@ const Login: React.FC = () => {
           <label htmlFor="email">Email:</label>
           <input
             type="text"
-            placeholder="Insira seu e-mail"
+            placeholder="Insert your email"
             name="email"
             id="email"
             value={email}
             onChange={event => setEmail(event.target.value)}
           />
 
-          <label htmlFor="pass">Senha:</label>
+          <label htmlFor="pass">Password:</label>
           <input
             type="password"
-            placeholder="Insira sua senha"
+            placeholder="Insert your password"
             name="pass"
             id="pass"
             value={password}
             onChange={event => setPassword(event.target.value)}
           />
 
-          <input type="submit" value="Fazer login" />
+          <input type="submit" value="Sign in" />
 
-          <Link to="/register">Ainda não possui conta?</Link>
+          <Link to="/register">Don&#39;t have an account?</Link>
         </form>
       </S.Box>
       <S.Thumbnail />

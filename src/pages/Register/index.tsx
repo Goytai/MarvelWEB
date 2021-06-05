@@ -23,11 +23,11 @@ const Register: React.FC = () => {
 
       try {
         const schema = Yup.object().shape({
-          name: Yup.string().required('Nome obrigatório'),
+          name: Yup.string().required('Name is required'),
           email: Yup.string()
-            .required('E-mail obrigatório')
-            .email('Digite um e-mail válido'),
-          password: Yup.string().min(6, 'No mínimo 6 dígitos')
+            .required('Email is required')
+            .email('Insert a valid email.'),
+          password: Yup.string().min(6, 'At least 6 digits')
         });
 
         await schema.validate(
@@ -57,10 +57,10 @@ const Register: React.FC = () => {
       <S.Box>
         <S.Logo />
         <form onSubmit={event => formSubmit(event)}>
-          <label htmlFor="name">Nome:</label>
+          <label htmlFor="name">Name:</label>
           <input
             type="text"
-            placeholder="Insira seu nome"
+            placeholder="Insert your name"
             name="name"
             id="name"
             value={name}
@@ -70,26 +70,26 @@ const Register: React.FC = () => {
           <label htmlFor="email">Email:</label>
           <input
             type="text"
-            placeholder="Insira seu e-mail"
+            placeholder="Insert your email"
             name="email"
             id="email"
             value={email}
             onChange={event => setEmail(event.target.value)}
           />
 
-          <label htmlFor="pass">Senha:</label>
+          <label htmlFor="pass">Password:</label>
           <input
             type="password"
-            placeholder="Insira sua senha"
+            placeholder="Insert your password"
             name="pass"
             id="pass"
             value={password}
             onChange={event => setPassword(event.target.value)}
           />
 
-          <input type="submit" value="Fazer cadastro" />
+          <input type="submit" value="Sign up" />
 
-          <Link to="/">Já possui conta?</Link>
+          <Link to="/">Already have an account?</Link>
         </form>
       </S.Box>
     </S.Container>

@@ -19,6 +19,10 @@ export const ErrorProvider: React.FC = ({ children }) => {
   api.interceptors.response.use(
     res => res,
     error => {
+      if (error.response.status === undefined) {
+        throw error;
+      }
+
       const statusCode = String(error.response.status);
       switch (statusCode) {
         case '400':
